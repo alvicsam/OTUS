@@ -34,7 +34,7 @@ reboot для проверки <br>
 ## Установка модуля <br>
 
 Создаем каталог /lib/dracut/modules.d/01mymodule <br>
-Там создаем два файла <br>
+Там создаем два файла module-setup.sh и run.sh <br>
 Чтобы увидеть ascii-изображение отключаем графическую тему при  загрузке plymouth-set-default-theme details <br>
 dracut -v -f <br>
 reboot
