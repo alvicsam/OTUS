@@ -1,0 +1,8 @@
+Unit]
+Description=Logfile word finder
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/sysconfig/myserviceconfig
+ExecStart=/bin/bash /root/myservice.sh
+
