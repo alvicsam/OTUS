@@ -1,0 +1,15 @@
+[Unit]
+Description=Spawn-fcgi Service
+After=syslog.target
+Requires=spawn-fcgi.socket
+
+[Service]
+Type=forking
+EnvironmentFile=/etc/sysconfig/spawn-fcgi
+PIDFile=/var/run/spawn-fcgi.pid
+ExecStart=/bin/spawn-fcgi $OPTIONS
+ExecStop=/bin/kill -s TERM $MAINPID
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target

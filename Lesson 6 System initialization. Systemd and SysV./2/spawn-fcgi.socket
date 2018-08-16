@@ -1,0 +1,9 @@
+[Unit]
+Description=spawn-fcgi Listen Socket
+
+[Socket]
+ListenStream=/var/run/spawn-fcgi.sock
+
+[Install]
+WantedBy=sockets.target
+
