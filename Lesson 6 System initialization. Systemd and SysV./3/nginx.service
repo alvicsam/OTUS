@@ -1,0 +1,15 @@
+# Нашел данный хак у openvpn, это должен был быть systemd.target, но ему нельзя посылать команду reload
+
+[Unit]
+Description=Nginx service
+After=network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/true
+ExecReload=/bin/true
+WorkingDirectory=/etc/nginx
+
+[Install]
+WantedBy=multi-user.target

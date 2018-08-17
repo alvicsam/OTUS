@@ -28,3 +28,16 @@ spawn-fcgi.socket		/etc/systemd/system<br>
 >systemctl enable spawn-fcgi.service<br>
 >systemctl start spawn-fcgi.socket<br>
 >systemctl start spawn-fcgi.service<br>
+
+### Задание 3 (файлы в подкаталоге 3)
+
+Файлы .service кладем в /etc/systemd/system <br>
+Файлы .conf кладем в /etc/nginx <br>
+Сделать <br>
+>systemctl daemon-reload<br>
+>systemctl enable nginx@site1<br>
+>systemctl enable nginx@site2<br>
+>systemctl enable nginx@site3<br>
+>systemctl start nginx@site1<br>
+>systemctl start nginx@site2<br>
+>systemctl start nginx@site3<br>

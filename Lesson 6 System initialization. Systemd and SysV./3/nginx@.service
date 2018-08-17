@@ -1,0 +1,13 @@
+[Unit]
+Description=Nginx %i
+PartOf=nginx.service
+ReloadPropagatedFrom=nginx.service
+
+[Service]
+Type=forking
+ExecStart=/usr/sbin/nginx -c /etc/nginx/%i.conf
+ExecReload=/bin/kill -HUP $MAINPID
+WorkingDirectory=/etc/nginx
+
+[Install]
+WantedBy=multi-user.target
