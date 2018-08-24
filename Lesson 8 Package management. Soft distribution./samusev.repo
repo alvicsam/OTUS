@@ -1,0 +1,5 @@
+[samusev.info]
+name=Otus Lesson Repo
+baseurl=https://yum.samusev.info/centos/7/x86_64/
+enabled=1
+gpgcheck=0
