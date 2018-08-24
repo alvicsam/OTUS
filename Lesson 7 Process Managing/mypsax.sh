@@ -1,7 +1,5 @@
 #!/bin/bash
 
-forexit=`echo $0 | sed 's/\.\///'`
-
 #By default this number is 100. System variable sysconf(_SC_CLK_TCK). If you are note sure you can find it out by runnig sysclocktck
 frq=100
 m=0
