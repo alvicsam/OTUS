@@ -14,6 +14,7 @@ myservice.timer		/etc/systemd/system<br>
 
 
 Shell-скрипт будет писать количество ключевых слов (если их число будет расти) в файл /var/log/myservice.log. <br>
+Log-file для парсинга и ключевое слово указываются в /etc/sysconfig/myserviceconfig <br>
 
 
 ### Задание 2 (файлы в подкаталоге 2)
