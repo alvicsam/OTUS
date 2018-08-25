@@ -1,0 +1,81 @@
+# tasks file for nginx
+---
+- name: Install epel-release
+  yum:
+    name: epel-release
+    state: latest
+  tags:
+    - package
+    - epel
+
+- name: Install nginx
+  yum:
+    name: nginx
+    state: latest
+  tags:
+    - package
+    - nginx
+
+- name: Update nginx.conf configuration file - /etc/nginx/nginx.conf
+  template:
+    src: etc/nginx/nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload nginx
+  tags:
+    - configuration
+    - nginx-configuration
+
+- name: Update vhost configuration file - /etc/nginx/conf.d/hellootus.conf
+  template:
+    src: etc/nginx/conf.d/hellootus.conf.j2
+    dest: /etc/nginx/conf.d/hellootus.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload nginx
+  tags:
+    - configuration
+    - nginx-vhost-configuration
+
+- name: Creates directory /var/www
+  file:
+    path: /var/www
+    state: directory
+    mode: 0755
+    owner: nginx
+    group: nginx
+  tags:
+    - configuration
+    - nginx-create-dir
+
+- name: Copy index.html
+  copy:
+    src: "{{ nginx_vhost_files }}"
+    dest: /var/www
+    owner: nginx
+    group: nginx
+    mode: 0644
+  when: nginx_vhost_files is defined
+  notify: reload nginx
+  tags:
+    - configuration
+    - nginx-vhost-files
+
+- name: enable nginx
+  systemd:
+    name: nginx
+    enabled: yes
+  tags:
+    - configuration
+    - nginx-systemd-enable
+
+- name: start nginx
+  systemd:
+    name: nginx
+    state: started
+  tags:
+    - configuration
+    - nginx-systemd-start

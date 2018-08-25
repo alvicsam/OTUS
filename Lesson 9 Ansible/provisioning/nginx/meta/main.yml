@@ -1,0 +1,14 @@
+# meta file for nginx
+---
+galaxy_info:
+  author: Alexander Samusev
+  description: Set up nginx via yum with default hello outs page
+  license: GNU
+  min_ansible_version: 2.2.0
+  platforms:
+    - name: EL
+      versions:
+        - 7
+  galaxy_tags:
+    - web
+dependencies: []

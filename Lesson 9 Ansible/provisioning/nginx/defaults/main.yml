@@ -1,0 +1,6 @@
+# defaults file for nginx
+---
+nginx_workers: auto
+nginx_vhost_port: 8080
+  
+nginx_vhost_files: files/www/
