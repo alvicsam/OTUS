@@ -1,0 +1,25 @@
+#!/bin/sh
+
+groupadm=`cat /etc/group | grep admin | wc -l`
+useringroup=`cat /etc/group | grep admin | grep $PAM_USER | wc -l`
+today=`date '+%d-%m'`
+dow=`date +%u`
+checkdate=`python /etc/pam-script.d/checkdate.py $today`
+
+#For debug
+#stamp=`/bin/date +'%Y%m%d%H%M%S %a'`
+#script=`basename $0`
+#LOGFILE=/tmp/pam-script.log
+#echo $stamp $script $PAM_SERVICE $PAM_TYPE user=$PAM_USER ruser=$PAM_RUSER rhost=$PAM_RHOST tty=$PAM_TTY args=["$@"] groupadm=$groupadm useringroup=$useringroup id=$id checkdate=$checkdate   dow=$dow >> $LOGFILE
+#echo $ssh_sess >> $LOGFILE
+#chmod 666 $LOGFILE > /dev/null 2>&1
+
+if [ $useringroup -eq 0  ]; then
+    if [ $checkdate == "True" ] || [ $dow -eq 6  ] || [ $dow -eq 7 ]; then
+#       echo BLOCK >> $LOGFILE
+	exit 1
+    fi
+fi
+
+# success
+exit 0
