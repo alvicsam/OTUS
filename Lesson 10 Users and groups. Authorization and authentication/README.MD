@@ -18,8 +18,8 @@ blockuser - проверяет дату и пользователя (есть л
 ## Дать рута
 
 Создать файл `/etc/security/capability.conf` и вписать в него:<br>
->>>cap_sys_admin   vagrant <br>
->>>none *
+>cap_sys_admin   vagrant <br>
+>none *
 
 Добавить в файл /etc/pam.d/su строчку `auth            optional    pam_cap.so`
 Залогиниться под пользователем vagrant <br>
