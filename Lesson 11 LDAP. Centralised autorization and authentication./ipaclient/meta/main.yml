@@ -1,0 +1,14 @@
+# meta file for ipaclient
+---
+galaxy_info:
+  author: Alexander Samusev
+  description: Set up ipa client
+  license: GNU
+  min_ansible_version: 1.0
+  platforms:
+    - name: EL
+      versions:
+        - 7
+  galaxy_tags:
+    - ipa
+dependencies: []

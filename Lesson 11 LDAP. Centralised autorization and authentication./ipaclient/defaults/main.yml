@@ -1,0 +1,9 @@
+# defaults file for ipaclient
+---
+ipa_realm: IPASERVER.HOME.LOCAL
+ipa_server: ipaserver.home.local
+ipa_domain: ipaserver.home.local
+ipa_principal: admin@IPASERVER.HOME.LOCAL
+ipa_reconfigure: False
+#ipa_password: you need to specify this in ipa_password.yml via ansible vault
+ipa_hostname: ipaclient.home.local

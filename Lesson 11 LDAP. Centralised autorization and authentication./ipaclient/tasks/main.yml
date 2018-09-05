@@ -1,0 +1,49 @@
+# tasks file for ipaclient
+---
+- name: Install epel-release
+  yum:
+    name: epel-release
+    state: latest
+  tags:
+    - package
+    - epel
+
+- name: Install ipa-client-install
+  yum:
+    name: freeipa-client
+    state: latest
+  tags:
+    - package
+    - ipa-client-install
+
+- name: Check that the /etc/ipa/default.conf exists
+  stat:
+    path: /etc/ipa/default.conf
+  register: stat_result
+  tags:
+    - configure
+    - ipa-client-check
+
+- name: Run the IPA Client installer
+  shell: >
+    ipa-client-install -U
+    --force-join
+    --server {{ ipa_server }}
+    --realm {{ ipa_realm }}
+    --domain {{ ipa_domain }}
+    --principal {{ ipa_principal }}
+    --password {{ ipa_password }}
+    --hostname={{ ipa_hostname }}
+    --mkhomedir
+    --force-ntpd
+  when: stat_result.stat.exists == False
+  tags:
+    - configure
+    - ipa-client-install
+
+- name: Run the IPA Client uninstaller
+  shell: "ipa-client-install -U --uninstall"
+  when: ipa_reconfigure
+  tags:
+    - configure
+    - ipa-client-remove

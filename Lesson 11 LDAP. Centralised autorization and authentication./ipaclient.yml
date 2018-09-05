@@ -1,0 +1,7 @@
+- name: ipaclient
+  hosts: ipaclient
+  vars_files:
+    - ipa_password.yml
+  become: True
+  roles:
+    - ipaclient
