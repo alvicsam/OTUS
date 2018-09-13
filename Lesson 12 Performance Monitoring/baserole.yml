@@ -1,0 +1,5 @@
+- name: baserole
+  hosts: otuslinux
+  become: True
+  roles:
+    - baserole

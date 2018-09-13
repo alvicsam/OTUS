@@ -1,0 +1,6 @@
+---
+# handlers file for roles/atop
+  - name: atop-restart
+    service:
+      name: atop
+      state: restarted

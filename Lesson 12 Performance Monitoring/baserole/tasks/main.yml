@@ -1,0 +1,97 @@
+# tasks file for tuning
+---
+- name: Install epel-release
+  yum:
+    name: epel-release
+    state: latest
+  tags:
+    - package
+    - epel
+
+- name: Install htop
+  yum:
+    name: htop
+    state: latest
+  tags:
+    - package
+    - htop
+
+- name: Install net-tools
+  yum:
+    name: net-tools
+    state: latest
+  tags:
+    - package
+    - net-tools
+
+- name: Install sysstat
+  yum:
+    name: systat
+    state: latest
+  tags:
+    - package
+    - systat
+
+- name: Install atop
+  yum:
+    name: atop
+    state: latest
+  tags:
+    - package
+    - atop
+
+- name: Change atop default interval
+  template:
+    src: etc/sysconfig/atop.j2
+    dest: /etc/sysconfig/atop
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart-atop
+  tags:
+    - configuration
+    - atop-configuration
+
+- name: enable atop
+  systemd:
+    name: atop
+    enabled: yes
+  tags:
+    - configuration
+    - atop-systemd-enable
+
+- name: start atop
+  systemd:
+    name: atop
+    state: started
+  tags:
+    - configuration
+    - atop-systemd-start
+
+
+- name: Setting sysctl vm.swapiness
+  sysctl:
+    name: vm.swappiness
+    value: 1
+    state: present
+  tags:
+    - sysctl
+    - vm.swapiness
+
+- name: Setting sysctl net.core.somaxconn
+  sysctl:
+    name: net.core.somaxconn
+    value: 1024
+    state: present
+  tags:
+    - sysctl
+    - net.core.somaxconn
+
+- name: Setting sysctl net.ipv4.tcp_max_syn_backlog
+  sysctl:
+    name: net.ipv4.tcp_max_syn_backlog
+    value: 1024
+    state: present
+  tags:
+    - sysctl
+    - net.ipv4.tcp_max_syn_backlog

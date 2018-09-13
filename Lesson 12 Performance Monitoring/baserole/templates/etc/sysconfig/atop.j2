@@ -1,0 +1,15 @@
+# Made by Ansible, do not touch
+# sysconfig atop
+#
+
+# Current Day format
+CURDAY=`date +%Y%m%d`
+# Log files path
+LOGPATH=/var/log/atop
+# Binaries path
+BINPATH=/usr/bin
+# PID File
+PIDFILE=/var/run/atop.pid
+# interval (default 10 minutes)
+#INTERVAL=600
+INTERVAL={{ atop_interval }}
