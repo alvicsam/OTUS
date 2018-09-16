@@ -1,0 +1,34 @@
+# tasks file for nginx
+---
+- name: Install epel-release
+  yum:
+    name: epel-release
+    state: latest
+  tags:
+    - package
+    - epel
+
+- name: Install mc
+  yum:
+    name: mc
+    state: latest
+  tags:
+    - package
+    - mc
+
+- name: Install nano
+  yum:
+    name: nano
+    state: latest
+  tags:
+    - package
+    - nano
+
+- name: Install net-tools
+  yum:
+    name: net-tools
+    state: latest
+  tags:
+    - package
+    - net-tools
+

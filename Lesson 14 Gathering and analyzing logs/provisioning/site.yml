@@ -1,0 +1,16 @@
+---
+- name: Configure Rsyslog server (logserver)
+  hosts: logserver
+  become: True
+  roles:
+    - base
+    - logserver
+
+- name: Configure web
+  hosts: web
+  become: true
+  roles:
+    - base
+    - nginx
+    - logclient
+

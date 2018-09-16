@@ -1,0 +1,25 @@
+# tasks file for logserver
+---
+- name: Create /var/log/remote
+  file:
+    path: /var/log/remote
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  notify: restart rsyslog
+  tags:
+    - configuration
+    - rsyslog-create-dir
+
+- name: Update /etc/rsyslog.conf
+  template:
+    src: etc/rsyslog.conf.j2
+    dest: /etc/rsyslog.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart rsyslog
+  tags:
+    - configuration
+    - rsyslog-configuration

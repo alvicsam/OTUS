@@ -1,0 +1,12 @@
+server {
+        listen       {{ nginx_vhost_port  }} default_server;
+        server_name  web;
+        root         /var/www/;
+	index		index.html;
+
+        location / {
+
+        }
+
+
+    }
