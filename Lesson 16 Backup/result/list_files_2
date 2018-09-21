@@ -1,0 +1,19 @@
+[root@bserver bacula]# echo "list files jobid=14" | bconsole
+Connecting to Director localhost:9101
+1000 OK: bserver Version: 5.2.13 (19 February 2013)
+Enter a period to cancel a command.
+list files jobid=14
+Automatically selected Catalog: MyCatalog
+Using Catalog "MyCatalog"
++----------+
+| Filename |
++----------+
+| /etc/    |
+| /etc/motd |
++----------+
++-------+---------------+---------------------+------+-------+----------+----------+-----------+
+| JobId | Name          | StartTime           | Type | Level | JobFiles | JobBytes | JobStatus |
++-------+---------------+---------------------+------+-------+----------+----------+-----------+
+|    14 | BackupClient1 | 2018-09-21 12:35:02 | B    | D     |        2 |       19 | T         |
++-------+---------------+---------------------+------+-------+----------+----------+-----------+
+You have messages.

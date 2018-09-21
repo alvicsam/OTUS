@@ -1,0 +1,26 @@
+[root@bserver bacula]# echo "list jobs" | bconsole
+Connecting to Director localhost:9101
+1000 OK: bserver Version: 5.2.13 (19 February 2013)
+Enter a period to cancel a command.
+list jobs
+Automatically selected Catalog: MyCatalog
+Using Catalog "MyCatalog"
++-------+---------------+---------------------+------+-------+----------+------------+-----------+
+| JobId | Name          | StartTime           | Type | Level | JobFiles | JobBytes   | JobStatus |
++-------+---------------+---------------------+------+-------+----------+------------+-----------+
+|     1 | BackupClient1 | 2018-09-21 11:00:02 | B    | F     |        0 |          0 | f         |
+|     2 | BackupClient1 | 2018-09-21 11:05:02 | B    | F     |        0 |          0 | f         |
+|     3 | BackupClient1 | 2018-09-21 11:10:02 | B    | F     |        0 |          0 | f         |
+|     4 | BackupClient1 | 2018-09-21 11:20:02 | B    | F     |    2,387 | 10,900,229 | T         |
+|     5 | BackupClient1 | 2018-09-21 11:30:02 | B    | I     |        0 |          0 | T         |
+|     6 | BackupClient1 | 2018-09-21 11:35:02 | B    | D     |        2 |         19 | T         |
+|     7 | BackupClient1 | 2018-09-21 11:40:02 | B    | I     |        0 |          0 | T         |
+|     8 | BackupClient1 | 2018-09-21 11:50:02 | B    | I     |        0 |          0 | T         |
+|     9 | BackupClient1 | 2018-09-21 12:00:02 | B    | I     |        0 |          0 | T         |
+|    10 | BackupClient1 | 2018-09-21 12:05:02 | B    | D     |        2 |         19 | T         |
+|    11 | BackupClient1 | 2018-09-21 12:10:02 | B    | I     |        0 |          0 | T         |
+|    12 | BackupClient1 | 2018-09-21 12:20:02 | B    | I     |        0 |          0 | T         |
+|    13 | BackupClient1 | 2018-09-21 12:30:02 | B    | I     |        0 |          0 | T         |
+|    14 | BackupClient1 | 2018-09-21 12:35:02 | B    | D     |        2 |         19 | T         |
+|    15 | BackupClient1 | 2018-09-21 12:40:02 | B    | I     |        0 |          0 | T         |
++-------+---------------+---------------------+------+-------+----------+------------+-----------+
