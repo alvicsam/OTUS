@@ -1,13 +1,13 @@
 # Split-DNS
 
-Запустить `vagrant up`
-
 dns-master: 192.168.50.10<br>
 dns-slave: 192.168.50.11<br>
 dns-client1: 192.168.50.15<br>
 dns-client2: 192.168.50.16<br>
 
 Проверка:
+
+Запустить `vagrant up`
 
 На client1:
 
