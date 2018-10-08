@@ -1,0 +1,113 @@
+---
+- hosts: inetRouter
+  sudo: yes
+  tasks:
+  - name: Install epel-release
+    yum:
+      name: epel-release
+      state: latest
+  - name: sysctl enable forward
+    sysctl:
+      name: net.ipv4.ip_forward
+      value: 1
+      state: present
+  - name: sysctl disable ipv6
+    sysctl:
+      name: net.ipv6.conf.all.disable_ipv6
+      value: 1
+      state: present
+  - name: Check rpm nux
+    shell: rpm -q nux-dextop-release.noarch
+    args:
+      executable: /bin/bash
+    register: rpm_check
+  - name: Run rpm
+    shell: rpm -Uhv http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-5.el7.nux.noarch.rpm
+    args:
+      executable: /bin/bash
+    when: rpm_check.stdout.find('is not installed') != -1
+  - name: add to authorized_keys
+    lineinfile:
+      path: /home/vagrant/.ssh/authorized_keys
+      line: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCcYzO4SV+HRWR9jaEvPvGBSByFeTy1QXbliJsChMqEZ25wC3OkTXNUjrrFjEqBLA5NJpz/BoP/AjWJ1URYO9NC/XtHfaIvMR5/aBbhsfdJY99nZX0WiU/LfJsg1NXiSBLtqVF9qsB3ldrRARkBGDjixHuOaHKmY1prZuSehKr31+RiPxpT2ZXHYIUretrBbaQ5nCrnNG4QDrQpQaePCCnD8huU2nGT3bjpsuPmYGCKSNMu+IiRjcJdYtB0iFwDVKVmboPOItxgliftHr4Q+69CYxZuP6smLekMNFipXnlh7tWk5VvVWaxbhVmJ3O5PPOZmDpEEB3xFuMh3u0JmMSeT vagrant@centralServer'
+  - name: Install knock-server
+    yum:
+      name: knock-server
+      state: latest
+  - name: Update /etc/systemd/system/knockd.service
+    template:
+      src: knockd.service.j2
+      dest: /etc/systemd/system/knockd.service
+      owner: root
+      group: root
+      mode: 0644
+  - name: Update /etc/knockd.conf 
+    template:
+      src: knockd.conf.j2
+      dest: /etc/knockd.conf
+      owner: root
+      group: root
+      mode: 0644
+  - name: Update /etc/sysconfig/knockd
+    template:
+      src: knockd.j2
+      dest: /etc/sysconfig/knockd
+      owner: root
+      group: root
+      mode: 0644
+  - name: restart knockd
+    systemd:
+      state: restarted
+      daemon_reload: yes
+      name: knockd
+
+- hosts: inetRouter2
+  sudo: yes
+  tasks:
+  - name: Install epel-release
+    yum:
+      name: epel-release
+      state: latest
+  - name: sysctl enable forward
+    sysctl:
+      name: net.ipv4.ip_forward
+      value: 1
+      state: present
+  - name: sysctl disable ipv6
+    sysctl:
+      name: net.ipv6.conf.all.disable_ipv6
+      value: 1
+      state: present
+
+
+- hosts: centralServer
+  sudo: yes
+  tasks:
+  - name: Install epel-release
+    yum:
+      name: 
+        - epel-release
+        - telnet
+      state: latest
+  - name: Update /home/vagrant/.ssh/id_rsa
+    template:
+      src: id_rsa.j2
+      dest: /home/vagrant/.ssh/id_rsa
+      owner: vagrant
+      group: vagrant
+      mode: 0600
+  - name: sysctl disable ipv6
+    sysctl:
+      name: net.ipv6.conf.all.disable_ipv6
+      value: 1
+      state: present
+  - name: Install nginx
+    yum:
+      name: 
+        - nginx
+      state: latest
+  - name: start nginx
+    systemd:
+      state: started
+      daemon_reload: yes
+      name: nginx

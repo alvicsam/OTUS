@@ -1,0 +1,12 @@
+[Unit]
+Description=Knockd Service
+After=syslog.target
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/sysconfig/knockd
+PIDFile=/var/run/knockd.pid
+ExecStart=/sbin/knockd $OPTIONS
+
+[Install]
+WantedBy=multi-user.target
