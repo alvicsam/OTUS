@@ -1,0 +1,213 @@
+---
+- hosts: inetRouter
+  sudo: yes
+  vars:
+    ipaddr: 192.168.1.1
+    device1: eth1
+    device2: eth2
+  tasks:
+  - name: Update /etc/sysconfig/network-scripts/ifcfg-bond0
+    template:
+      src: ifcfg-bond0.j2
+      dest: /etc/sysconfig/network-scripts/ifcfg-bond0
+      owner: root
+      group: root
+      mode: 0644
+    notify:
+    - restart network
+  - name: Update /etc/sysconfig/network-scripts/ifcfg-eth1
+    template:
+      src: ifcfg-dev1.j2
+      dest: /etc/sysconfig/network-scripts/ifcfg-eth1
+      owner: root
+      group: root
+      mode: 0644
+    notify:
+    - restart network
+  - name: Update /etc/sysconfig/network-scripts/ifcfg-eth2
+    template:
+      src: ifcfg-dev2.j2
+      dest: /etc/sysconfig/network-scripts/ifcfg-eth2
+      owner: root
+      group: root
+      mode: 0644
+    notify:
+    - restart network
+  handlers:
+  - name: restart network
+    systemd:
+      state: restarted
+      daemon_reload: yes
+      name: network
+
+- hosts: centralServer
+  sudo: yes
+  vars:
+    ipaddr: 192.168.1.2
+    device1: eth1
+    device2: eth2
+  tasks:
+  - name: Update /etc/sysconfig/network-scripts/ifcfg-bond0
+    template:
+      src: ifcfg-bond0.j2
+      dest: /etc/sysconfig/network-scripts/ifcfg-bond0
+      owner: root
+      group: root
+      mode: 0644
+    notify:
+    - restart network
+  - name: Update /etc/sysconfig/network-scripts/ifcfg-eth1
+    template:
+      src: ifcfg-dev1.j2
+      dest: /etc/sysconfig/network-scripts/ifcfg-eth1
+      owner: root
+      group: root
+      mode: 0644
+    notify:
+    - restart network
+  - name: Update /etc/sysconfig/network-scripts/ifcfg-eth2
+    template:
+      src: ifcfg-dev2.j2
+      dest: /etc/sysconfig/network-scripts/ifcfg-eth2
+      owner: root
+      group: root
+      mode: 0644
+    notify:
+    - restart network
+  handlers:
+  - name: restart network
+    systemd:
+      state: restarted
+      daemon_reload: yes
+      name: network
+
+
+- hosts: testClient1
+  sudo: yes
+  vars:
+    ipaddr: 10.10.10.254
+    device: eth1.100
+  tasks:
+  - name: Update /etc/sysconfig/network-scripts/ifcfg-eth1
+    template:
+      src: ifcfg-eth1.j2
+      dest: /etc/sysconfig/network-scripts/ifcfg-eth1
+      owner: root
+      group: root
+      mode: 0644
+    notify:
+    - restart network
+  - name: Update /etc/sysconfig/network-scripts/ifcfg-eth1.100
+    template:
+      src: ifcfg-eth1.vlan.j2
+      dest: /etc/sysconfig/network-scripts/ifcfg-eth1.100
+      owner: root
+      group: root
+      mode: 0644
+    notify:
+    - restart network
+  handlers:
+  - name: restart network
+    systemd:
+      state: restarted
+      daemon_reload: yes
+      name: network
+
+
+- hosts: testClient2
+  sudo: yes
+  vars:
+    ipaddr: 10.10.10.254
+    device: eth1.200
+  tasks:
+  - name: Update /etc/sysconfig/network-scripts/ifcfg-eth1
+    template:
+      src: ifcfg-eth1.j2
+      dest: /etc/sysconfig/network-scripts/ifcfg-eth1
+      owner: root
+      group: root
+      mode: 0644
+    notify:
+    - restart network
+  - name: Update /etc/sysconfig/network-scripts/ifcfg-eth1.200
+    template:
+      src: ifcfg-eth1.vlan.j2
+      dest: /etc/sysconfig/network-scripts/ifcfg-eth1.200
+      owner: root
+      group: root
+      mode: 0644
+    notify:
+    - restart network
+  handlers:
+  - name: restart network
+    systemd:
+      state: restarted
+      daemon_reload: yes
+      name: network
+
+
+- hosts: testServer1
+  sudo: yes
+  vars:
+    ipaddr: 10.10.10.1
+    device: eth1.100
+  tasks:
+  - name: Install epel-release
+    yum:
+      name: 
+        - epel-release
+        - telnet
+      state: latest
+  - name: Update /etc/sysconfig/network-scripts/ifcfg-eth1
+    template:
+      src: ifcfg-eth1.j2
+      dest: /etc/sysconfig/network-scripts/ifcfg-eth1
+      owner: root
+      group: root
+      mode: 0644
+    notify:
+    - restart network
+  - name: Update /etc/sysconfig/network-scripts/ifcfg-eth1.100
+    template:
+      src: ifcfg-eth1.vlan.j2
+      dest: /etc/sysconfig/network-scripts/ifcfg-eth1.100
+      owner: root
+      group: root
+      mode: 0644
+    notify:
+    - restart network
+  handlers:
+  - name: restart network
+    systemd:
+      state: restarted
+      daemon_reload: yes
+      name: network
+
+- hosts: testServer2
+  sudo: yes
+  vars:
+    ipaddr: 10.10.10.1
+    device: eth1.200
+  tasks:
+  - name: Update /etc/sysconfig/network-scripts/ifcfg-eth1
+    template:
+      src: ifcfg-eth1.j2
+      dest: /etc/sysconfig/network-scripts/ifcfg-eth1
+      owner: root
+      group: root
+      mode: 0644
+  - name: Update /etc/sysconfig/network-scripts/ifcfg-eth1.200
+    template:
+      src: ifcfg-eth1.vlan.j2
+      dest: /etc/sysconfig/network-scripts/ifcfg-eth1.200
+      owner: root
+      group: root
+      mode: 0644
+    notify:
+    - restart network
+  handlers:
+  - name: restart network
+    systemd:
+      state: restarted
+      daemon_reload: yes
+      name: network

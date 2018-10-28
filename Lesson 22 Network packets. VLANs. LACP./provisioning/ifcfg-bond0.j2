@@ -1,0 +1,9 @@
+DEVICE=bond0
+ONBOOT=yes
+TYPE=Bond
+BONDING_MASTER=yes
+IPADDR={{ ipaddr }}
+PREFIX=24
+BOOTPROTO=static
+USERCTL=no
+BONDING_OPTS="mode=1 miimon=100 fail_over_mac=1"
