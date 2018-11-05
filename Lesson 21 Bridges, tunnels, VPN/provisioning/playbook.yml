@@ -1,0 +1,171 @@
+---
+- hosts: ovpn1
+  sudo: yes
+  vars:
+    ipaddr: 192.168.10.100
+  tasks:
+  - name: Install epel
+    yum:
+      name: epel-release
+      state: latest
+  - name: install packages
+    yum: name={{ item }} state=latest
+    with_items:
+      - bridge-utils
+      - openvpn
+  - name: Update /etc/sysconfig/network-scripts/ifcfg-br0
+    template:
+      src: ifcfg-br0.j2
+      dest: /etc/sysconfig/network-scripts/ifcfg-br0
+      owner: root
+      group: root
+      mode: 0644
+    notify:
+    - restart network
+  - name: Update /etc/sysconfig/network-scripts/ifcfg-eth1
+    template:
+      src: ifcfg-eth1.j2
+      dest: /etc/sysconfig/network-scripts/ifcfg-eth1
+      owner: root
+      group: root
+      mode: 0644
+    notify:
+    - restart network
+  - name: Update /etc/openvpn/br.sh
+    template:
+      src: br.sh.j2
+      dest: /etc/openvpn/br.sh
+      owner: root
+      group: root
+      mode: 0755
+  - name: Update /usr/lib/systemd/system/openvpn-server@.service
+    template:
+      src: openvpn-server@.service.j2
+      dest: /usr/lib/systemd/system/openvpn-server@.service
+      owner: root
+      group: root
+      mode: 0644
+    notify:
+    - restart openvpn
+  - name: Update /etc/openvpn/server/static.key
+    template:
+      src: static.key.j2
+      dest: /etc/openvpn/server/static.key
+      owner: root
+      group: root
+      mode: 0600
+    notify:
+    - restart openvpn
+  - name: Update /etc/openvpn/server/server.conf
+    template:
+      src: openvpn-server.conf.j2
+      dest: /etc/openvpn/server/server.conf
+      owner: root
+      group: root
+      mode: 0644
+    notify:
+    - restart openvpn
+  handlers:
+  - name: restart network
+    systemd:
+      state: restarted
+      daemon_reload: yes
+      name: network
+  - name: restart openvpn
+    systemd:
+      state: restarted
+      daemon_reload: yes
+      name: openvpn-server@server
+
+- hosts: ovpn2
+  sudo: yes
+  vars:
+    ipaddr: 192.168.10.101
+  tasks:
+  - name: Install epel
+    yum:
+      name: epel-release
+      state: latest
+  - name: install packages
+    yum: name={{ item }} state=latest
+    with_items:
+      - bridge-utils
+      - openvpn
+  - name: Update /etc/sysconfig/network-scripts/ifcfg-br0
+    template:
+      src: ifcfg-br0.j2
+      dest: /etc/sysconfig/network-scripts/ifcfg-br0
+      owner: root
+      group: root
+      mode: 0644
+    notify:
+    - restart network
+  - name: Update /etc/sysconfig/network-scripts/ifcfg-eth1
+    template:
+      src: ifcfg-eth1.j2
+      dest: /etc/sysconfig/network-scripts/ifcfg-eth1
+      owner: root
+      group: root
+      mode: 0644
+    notify:
+    - restart network
+  - name: Update /etc/openvpn/br.sh
+    template:
+      src: br.sh.j2
+      dest: /etc/openvpn/br.sh
+      owner: root
+      group: root
+      mode: 0755
+  - name: Update /usr/lib/systemd/system/openvpn-client@.service
+    template:
+      src: openvpn-client@.service.j2
+      dest: /usr/lib/systemd/system/openvpn-client@.service
+      owner: root
+      group: root
+      mode: 0644
+    notify:
+    - restart openvpn
+  - name: Update /etc/openvpn/client/static.key
+    template:
+      src: static.key.j2
+      dest: /etc/openvpn/client/static.key
+      owner: root
+      group: root
+      mode: 0600
+    notify:
+    - restart openvpn
+  - name: Update /etc/openvpn/client/client.conf
+    template:
+      src: openvpn-client.conf.j2
+      dest: /etc/openvpn/client/client.conf
+      owner: root
+      group: root
+      mode: 0644
+    notify:
+    - restart openvpn
+  handlers:
+  - name: restart network
+    systemd:
+      state: restarted
+      daemon_reload: yes
+      name: network
+  - name: restart openvpn
+    systemd:
+      state: restarted
+      daemon_reload: yes
+      name: openvpn-client@client
+
+- hosts: client1
+  sudo: yes
+  tasks:
+  - name: "zaglushka"
+    debug:
+      msg: "reserved for future use"
+
+- hosts: client2
+  sudo: yes
+  tasks:
+  - name: "zaglushka"
+    debug:
+      msg: "reserved for future use"
+

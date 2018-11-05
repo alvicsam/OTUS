@@ -1,0 +1,68 @@
+# -*- mode: ruby -*-
+# vim: set ft=ruby :
+# -*- mode: ruby -*-
+# vim: set ft=ruby :
+
+MACHINES = {
+  :ovpn1 => {
+        :box_name => "centos/7",
+        :net => [
+                   {adapter: 2, virtualbox__intnet: "router-server"},
+                   {ip: '172.16.0.1', adapter: 3, netmask: "255.255.255.252", virtualbox__intnet: "ovpn"},
+                ]
+  },
+  :ovpn2 => {
+        :box_name => "centos/7",
+        :net => [
+                   {adapter: 2, virtualbox__intnet: "router-server"},
+                   {ip: '172.16.0.2', adapter: 3, netmask: "255.255.255.252", virtualbox__intnet: "ovpn"},
+                ]
+  },
+  :client1 => {
+        :box_name => "centos/7",
+        :net => [
+                   {ip: '192.168.10.1', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "router-server"},
+                ]
+  },
+  :client2 => {
+        :box_name => "centos/7",
+        :net => [
+                   {ip: '192.168.10.2', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "router-server"},
+                ]
+  },
+}
+
+Vagrant.configure("2") do |config|
+
+  MACHINES.each do |boxname, boxconfig|
+
+    config.vm.define boxname do |box|
+
+        box.vm.box = boxconfig[:box_name]
+        box.vm.host_name = boxname.to_s
+
+        boxconfig[:net].each do |ipconf|
+          box.vm.network "private_network", ipconf
+        end
+        
+        if boxconfig.key?(:public)
+          box.vm.network "public_network", boxconfig[:public]
+        end
+
+        box.vm.provision "shell", inline: <<-SHELL
+          mkdir -p ~root/.ssh
+                cp ~vagrant/.ssh/auth* ~root/.ssh
+        SHELL
+        end
+
+  end
+
+  config.vm.provision "ansible" do |ansible|
+    ansible.verbose = "v"
+    ansible.playbook = "provisioning/playbook.yml"
+    ansible.sudo = "true"
+  end
+  
+  
+end
+
