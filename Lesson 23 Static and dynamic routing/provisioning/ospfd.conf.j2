@@ -1,0 +1,31 @@
+!
+! Zebra configuration saved from vty
+!   2018/11/10 12:18:04
+!
+hostname {{ hostname }}
+password zebra
+log file /var/log/quagga/quagga.log
+log stdout
+!
+!
+!
+interface eth0
+!
+interface eth1
+!
+interface eth2
+ ip ospf cost {{ cost1 }}
+!
+interface eth3
+ ip ospf cost {{ cost2 }}
+!
+interface lo
+!
+router ospf
+ ospf router-id {{ routerid }}
+ network {{ net1 }} area 0.0.0.{{ area }}
+ network {{ net2 }} area 0.0.0.0
+ network {{ net3 }} area 0.0.0.0
+!
+line vty
+!

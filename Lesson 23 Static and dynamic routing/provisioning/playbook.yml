@@ -1,0 +1,267 @@
+---
+- hosts: abr1
+  sudo: yes
+  vars:
+    hostname: abr1
+    cost1: 50
+    cost2: 50
+    routerid: 10.0.10.1
+    area: 1
+    net1: 10.0.10.0/24
+    net2: 172.16.12.8/30
+    net3: 172.16.16.8/30
+  tasks:
+  - name: Install epel
+    yum:
+      name: epel-release
+      state: latest
+  - name: install packages
+    yum: name={{ item }} state=latest
+    with_items:
+      - quagga
+      - libsemanage-python
+      - traceroute
+  - name: setsebool -P zebra_write_config 1
+    seboolean:
+      name: zebra_write_config
+      state: yes
+      persistent: yes
+  - name: Tuning sysctl
+    sysctl:
+      name: "{{ item.key }}"
+      value: "{{ item.value }}"
+      state: present
+    with_items:
+      - { key: net.ipv4.ip_forward, value: 1 }
+      - { key: net.ipv4.conf.all.rp_filter, value: 0 }
+      - { key: net.ipv4.conf.default.rp_filter, value: 0 }
+      - { key: net.ipv4.conf.eth0.rp_filter, value: 0 }
+      - { key: net.ipv4.conf.eth1.rp_filter, value: 0 }
+      - { key: net.ipv4.conf.eth2.rp_filter, value: 0 }
+      - { key: net.ipv4.conf.eth3.rp_filter, value: 0 }
+  - name: Update /etc/quagga/zebra.conf
+    template:
+      src: zebra.conf.j2
+      dest: /etc/quagga/zebra.conf
+      owner: quagga
+      group: quagga
+      mode: 0600
+    notify:
+    - restart zebra
+  - name: Update /etc/quagga/ospfd.conf
+    template:
+      src: ospfd.conf.j2
+      dest: /etc/quagga/ospfd.conf
+      owner: quagga
+      group: quagga
+      mode: 0600
+    notify:
+    - restart ospfd
+  handlers:
+  - name: restart zebra
+    systemd:
+      state: restarted
+      daemon_reload: yes
+      name: zebra
+  - name: restart ospfd
+    systemd:
+      state: restarted
+      daemon_reload: yes
+      name: ospfd
+
+- hosts: abr2
+  sudo: yes
+  vars:
+    hostname: abr2
+    cost1: 100
+    cost2: 1000
+    routerid: 10.0.20.1
+    area: 2
+    net1: 10.0.20.0/24
+    net2: 172.16.12.8/30
+    net3: 172.16.20.8/30
+  tasks:
+  - name: Install epel
+    yum:
+      name: epel-release
+      state: latest
+  - name: install packages
+    yum: name={{ item }} state=latest
+    with_items:
+      - quagga
+      - libsemanage-python
+      - traceroute
+  - name: setsebool -P zebra_write_config 1
+    seboolean:
+      name: zebra_write_config
+      state: yes
+      persistent: yes
+  - name: Tuning sysctl
+    sysctl:
+      name: "{{ item.key }}"
+      value: "{{ item.value }}"
+      state: present
+    with_items:
+      - { key: net.ipv4.ip_forward, value: 1 }
+      - { key: net.ipv4.conf.all.rp_filter, value: 0 }
+      - { key: net.ipv4.conf.default.rp_filter, value: 0 }
+      - { key: net.ipv4.conf.eth0.rp_filter, value: 0 }
+      - { key: net.ipv4.conf.eth1.rp_filter, value: 0 }
+      - { key: net.ipv4.conf.eth2.rp_filter, value: 0 }
+      - { key: net.ipv4.conf.eth3.rp_filter, value: 0 }
+  - name: Update /etc/quagga/zebra.conf
+    template:
+      src: zebra.conf.j2
+      dest: /etc/quagga/zebra.conf
+      owner: quagga
+      group: quagga
+      mode: 0600
+    notify:
+    - restart zebra
+  - name: Update /etc/quagga/ospfd.conf
+    template:
+      src: ospfd.conf.j2
+      dest: /etc/quagga/ospfd.conf
+      owner: quagga
+      group: quagga
+      mode: 0600
+    notify:
+    - restart ospfd
+  handlers:
+  - name: restart zebra
+    systemd:
+      state: restarted
+      daemon_reload: yes
+      name: zebra
+  - name: restart ospfd
+    systemd:
+      state: restarted
+      daemon_reload: yes
+      name: ospfd
+
+- hosts: abr3
+  sudo: yes
+  vars:
+    hostname: abr1
+    cost1: 50
+    cost2: 50
+    routerid: 10.0.30.1
+    area: 3
+    net1: 10.0.30.0/24
+    net2: 172.16.16.8/30
+    net3: 172.16.20.8/30
+  tasks:
+  - name: Install epel
+    yum:
+      name: epel-release
+      state: latest
+  - name: install packages
+    yum: name={{ item }} state=latest
+    with_items:
+      - quagga
+      - libsemanage-python
+      - traceroute
+  - name: setsebool -P zebra_write_config 1
+    seboolean:
+      name: zebra_write_config
+      state: yes
+      persistent: yes
+  - name: Tuning sysctl
+    sysctl:
+      name: "{{ item.key }}"
+      value: "{{ item.value }}"
+      state: present
+    with_items:
+      - { key: net.ipv4.ip_forward, value: 1 }
+      - { key: net.ipv4.conf.all.rp_filter, value: 0 }
+      - { key: net.ipv4.conf.default.rp_filter, value: 0 }
+      - { key: net.ipv4.conf.eth0.rp_filter, value: 0 }
+      - { key: net.ipv4.conf.eth1.rp_filter, value: 0 }
+      - { key: net.ipv4.conf.eth2.rp_filter, value: 0 }
+      - { key: net.ipv4.conf.eth3.rp_filter, value: 0 }
+  - name: Update /etc/quagga/zebra.conf
+    template:
+      src: zebra.conf.j2
+      dest: /etc/quagga/zebra.conf
+      owner: quagga
+      group: quagga
+      mode: 0600
+    notify:
+    - restart zebra
+  - name: Update /etc/quagga/ospfd.conf
+    template:
+      src: ospfd.conf.j2
+      dest: /etc/quagga/ospfd.conf
+      owner: quagga
+      group: quagga
+      mode: 0600
+    notify:
+    - restart ospfd
+  handlers:
+  - name: restart zebra
+    systemd:
+      state: restarted
+      daemon_reload: yes
+      name: zebra
+  - name: restart ospfd
+    systemd:
+      state: restarted
+      daemon_reload: yes
+      name: ospfd
+
+- hosts: client1
+  sudo: yes
+  tasks:
+  - name: "zaglushka"
+    debug:
+      msg: "reserved for future use"
+  - name: Install traceroute
+    yum:
+      name: traceroute
+      state: latest
+  - name: Remove default route from eth0
+    lineinfile:
+      path: /etc/sysconfig/network-scripts/ifcfg-eth0
+      line: 'DEFROUTE=no'
+    notify:
+    - restart network
+  - name: Add default route to eth1
+    lineinfile:
+      path: /etc/sysconfig/network-scripts/ifcfg-eth1
+      line: 'GATEWAY=10.0.10.1'
+    notify:
+    - restart network
+  handlers:
+  - name: restart network
+    systemd:
+      state: restarted
+      name: network
+
+- hosts: client2
+  sudo: yes
+  tasks:
+  - name: "zaglushka"
+    debug:
+      msg: "reserved for future use"
+  - name: Install traceroute
+    yum:
+      name: traceroute
+      state: latest
+  - name: Remove default route from eth0
+    lineinfile:
+      path: /etc/sysconfig/network-scripts/ifcfg-eth0
+      line: 'DEFROUTE=no'
+    notify:
+    - restart network
+  - name: Add default route to eth1
+    lineinfile:
+      path: /etc/sysconfig/network-scripts/ifcfg-eth1
+      line: 'GATEWAY=10.0.20.1'
+    notify:
+    - restart network
+  handlers:
+  - name: restart network
+    systemd:
+      state: restarted
+      name: network
+

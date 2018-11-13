@@ -1,0 +1,28 @@
+!
+! Zebra configuration saved from vty
+!   2018/11/10 12:18:04
+!
+hostname {{ hostname }}
+password zebra
+enable password zebra
+log file /var/log/quagga/quagga.log
+!
+interface eth0
+ ipv6 nd suppress-ra
+!
+interface eth1
+ ipv6 nd suppress-ra
+!
+interface eth2
+ ipv6 nd suppress-ra
+!
+interface eth3
+ ipv6 nd suppress-ra
+!
+interface lo
+!
+ip forwarding
+!
+!
+line vty
+!
