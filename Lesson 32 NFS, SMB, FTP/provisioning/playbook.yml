@@ -1,0 +1,63 @@
+---
+- hosts: nfsserver
+  become: true
+  tasks:
+  - name: "zaglushka"
+    debug:
+      msg: "reserved for future use"
+  - name: enable firewalld
+    systemd:
+      name: firewalld
+      enabled: yes
+      state: started
+  - name: firewalld rules
+    firewalld:
+      service: "{{ item }}"
+      permanent: true
+      state: enabled
+      immediate: true
+    with_items:
+      - nfs
+      - mountd
+      - rpc-bind
+  - name: Creating dir NFS
+    file:
+      path: /NFS
+      state: directory
+      owner: root
+      group: root
+      mode: 0775
+  - name: Set up NFS-server config
+    lineinfile:
+      path: /etc/exports
+      line: '/NFS       192.168.11.151/32(rw,async,fsid=0a0c9299-10b7-4c0b-91ab-5285ef68b901,crossmnt,no_subtree_check,no_root_squash)'
+    notify:
+    - restart nfs
+  - name: Creating file in /NFS
+    file:
+      path: /NFS/hello_otus
+      state: touch
+  handlers:
+  - name: restart nfs
+    systemd:
+      state: restarted
+      name: nfs-server
+
+
+- hosts: nfsclient
+  become: true
+  tasks:
+  - name: "zaglushka"
+    debug:
+      msg: "reserved for future use"
+  - name: mount nfs
+    mount:
+      fstype: nfs
+      opts: defaults
+      path: /mnt
+      state: mounted
+      src: 192.168.11.150:/NFS
+  - name: Writing line to a file on NFS-server
+    lineinfile:
+      path: /mnt/hello_otus
+      line: 'preved'
