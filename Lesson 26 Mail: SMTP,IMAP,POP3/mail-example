@@ -1,0 +1,13 @@
+From alvic@alvic.home  Mon Dec  3 13:01:29 2018
+Return-Path: <alvic@alvic.home>
+X-Original-To: info@otus.com
+Delivered-To: info@otus.com
+Received: from 192.168.1.191 (unknown [192.168.1.191])
+        by mserver.localdomain (Postfix) with SMTP id 31F40206A936
+        for <info@otus.com>; Mon,  3 Dec 2018 13:01:08 +0000 (UTC)
+Subject: test
+X-IMAPbase: 1543776846 0000000006
+X-UID: 6
+Status: RO
+
+Privet otus!
