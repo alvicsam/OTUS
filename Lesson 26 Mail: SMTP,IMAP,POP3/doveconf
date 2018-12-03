@@ -1,0 +1,37 @@
+# 2.2.10: /etc/dovecot/dovecot.conf
+# OS: Linux 3.10.0-862.2.3.el7.x86_64 x86_64 CentOS Linux release 7.5.1804 (Core)  xfs
+disable_plaintext_auth = no
+first_valid_uid = 1000
+mail_location = mbox:/var/mail/otus.com/%u
+mbox_write_locks = fcntl
+namespace inbox {
+  inbox = yes
+  location =
+  mailbox Drafts {
+    special_use = \Drafts
+  }
+  mailbox Junk {
+    special_use = \Junk
+  }
+  mailbox Sent {
+    special_use = \Sent
+  }
+  mailbox "Sent Messages" {
+    special_use = \Sent
+  }
+  mailbox Trash {
+    special_use = \Trash
+  }
+  prefix =
+}
+passdb {
+  args = scheme=CRYPT username_format=%u /etc/dovecot/users
+  driver = passwd-file
+}
+ssl = no
+ssl_cert = </etc/pki/dovecot/certs/dovecot.pem
+ssl_key = </etc/pki/dovecot/private/dovecot.pem
+userdb {
+  args = username_format=%u /etc/dovecot/users
+  driver = passwd-file
+}
