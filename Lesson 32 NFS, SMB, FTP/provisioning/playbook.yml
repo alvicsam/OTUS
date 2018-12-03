@@ -20,6 +20,20 @@
       - nfs
       - mountd
       - rpc-bind
+  - name: firewalld port 111-udp
+    firewalld:
+      zone: public
+      port: 111/udp
+      permanent: true
+      state: enabled
+      immediate: true
+  - name: firewalld port 2049-udp
+    firewalld:
+      zone: public
+      port: 2049/udp
+      permanent: true
+      state: enabled
+      immediate: true
   - name: Creating dir NFS
     file:
       path: /NFS
@@ -53,7 +67,7 @@
   - name: mount nfs
     mount:
       fstype: nfs
-      opts: defaults
+      opts: defaults,vers=3,proto=udp
       path: /mnt
       state: mounted
       src: 192.168.11.150:/NFS
