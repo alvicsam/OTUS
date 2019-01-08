@@ -1,0 +1,6 @@
+---
+mysql_role: "slave"
+mysql_server_id: 2
+mysql_server_ip: 192.168.1.106
+mysql_init: true
+mysql_root_pwd: "P@ssw0rd"

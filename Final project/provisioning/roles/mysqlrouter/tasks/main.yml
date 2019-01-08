@@ -1,0 +1,47 @@
+---
+# tasks file for mysqlrouter
+- name: install the mysql-repo
+  yum:
+    name: https://dev.mysql.com/get/mysql80-community-release-el7-1.noarch.rpm
+    state: present
+  tags:
+    - mysqlrouter
+    - mr-install-repo
+
+- name: install the mysqlrouter
+  yum:
+    name: mysql-router
+    state: present
+  tags:
+    - mysqlrouter
+    - mr-install-mr
+
+- name: Update mysqlrouter configuration file
+  template:
+    src: mysqlrouter.conf.j2
+    dest: /etc/mysqlrouter/mysqlrouter.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart mysqlrouter
+  tags:
+    - mysqlrouter
+    - mr-conf
+
+- name: enable nginx
+  systemd:
+    name: mysqlrouter
+    enabled: yes
+  tags:
+    - mysqlrouter
+    - mr-systemd-enable
+
+- name: start mysqlrouter
+  systemd:
+    name: mysqlrouter
+    state: started
+  tags:
+    - mysqlrouter
+    - mr-systemd-start
+
+

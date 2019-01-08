@@ -1,0 +1,8 @@
+---
+# defaults file for mysql-server
+mysql_role: "slave"
+mysql_server_id: 1
+mysql_gr_start_on_boot: "off"
+mysql_server_ip: 127.0.0.1
+mysql_init: true
+mysql_root_pwd: "P@ssw0rd"

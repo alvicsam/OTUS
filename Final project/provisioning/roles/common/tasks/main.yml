@@ -1,0 +1,56 @@
+---
+# tasks file for common
+- name: Install epel
+  yum:
+    name: epel-release
+    state: latest
+  tags:
+    - common
+    - epel
+
+- name: Install Common Packets
+  yum: pkg={{ item }}
+  with_items:
+    - mc
+    - nano
+    - telnet
+    - ntp
+    - policycoreutils-python
+  tags:
+    - common
+    - cmn-packages
+
+- name: Start the NTP service
+  service:
+    name: ntpd 
+    state: started
+    enabled: true
+  tags:
+    - common
+    - cmn-start-ntp
+
+- name: Start the firewalld service
+  service:
+    name: firewalld
+    state: started
+    enabled: true
+  tags:
+    - common
+    - cmn-start-fwld
+
+- name: Update hosts
+  template:
+    src: hosts.j2
+    dest: /etc/hosts
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - common
+    - etc-hosts
+
+
+# for debug purposes
+#- name: Disable SElinux
+#  command: /sbin/setenforce 0
+#  become: true

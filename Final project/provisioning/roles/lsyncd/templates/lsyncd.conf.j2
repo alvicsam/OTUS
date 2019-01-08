@@ -1,0 +1,33 @@
+----
+-- User configuration file for lsyncd.
+--
+-- Simple example for default rsync, but executing moves through on the target.
+--
+-- For more examples, see /usr/share/doc/lsyncd*/examples/
+-- 
+-- sync{default.rsyncssh, source="/var/www/html", host="localhost", targetdir="/tmp/htmlcopy/"}
+
+settings {
+  logfile    = "/var/log/lsyncd/lsyncd.log",
+  statusFile = "/var/log/lsyncd/lsyncd.status",
+  nodaemon   = false
+}
+sync {
+  default.rsyncssh,
+  source="/var/www/html",
+  host="www@{{ lsyncd_next_server }}",
+  targetdir="/var/www/html",
+  rsync = {
+    archive=true,
+    compress=true,
+    temp_dir="/tmp",
+    update=true,
+    links=true,
+    times=true,
+    protect_args=true
+  },
+  delay=3,
+  ssh = {
+    port = 22
+  }
+}

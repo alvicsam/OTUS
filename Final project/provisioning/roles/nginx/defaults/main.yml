@@ -1,0 +1,6 @@
+# defaults file for nginx
+---
+nginx_workers: auto
+nginx_vhost_port: 8080
+rsyslog_server_ip: 192.168.1.102
+nginx_semodule_files: files/

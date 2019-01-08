@@ -1,0 +1,89 @@
+---
+# tasks file for bkpserver
+- name: Create backup user
+  user:
+    name: bkp
+    password: '$6$CrYpt0$mi.Pu2ghRvOCAMfPk8KSvJemc9cboVDHvKSXr8.Q48tGvGtf5ZFZWAWr9E/Scj6PB56tZHc81rnkYbf04e1r/0'
+    state: present
+    shell: /bin/bash
+  tags:
+    - backup
+
+- name: Create .ssh for bkp
+  file:
+    path: /home/bkp/.ssh
+    state: directory
+    owner: bkp
+    group: bkp
+    mode: 0700
+  tags:
+    - backup
+
+- name: Placing id_rsa
+  copy:
+    src: id_rsa
+    dest: /root/.ssh/id_rsa
+    owner: root
+    group: root
+    mode: 0600
+  when: ansible_hostname == "bkplog"
+  tags:
+    - backup
+- name: Changing authorized_keys
+  authorized_key:
+    user: bkp
+    state: present
+    key: "{{ lookup('file', 'roles/bkpserver/files/id_rsa.pub') }}"
+  tags:
+    - backup
+
+- name: bkp wp dir to cron
+  cron:
+    name: bkp-wp-dir
+    minute: '*/10'
+    user: root
+    job: '/bin/tar cfz /home/bkp/wp.tar.gz /var/www/html/wordpress/'
+    cron_file: wp-cron
+  when: ansible_hostname == "fe1"
+  tags:
+    - backup
+    - backup-cron
+
+- name: bkp wp db to cron
+  cron:
+    name: bkp-wp-db
+    minute: '*/10'
+    user: root
+    job: '/bin/mysqldump --single-transaction --set-gtid-purged=OFF wordpress > /home/bkp/wp.sql'
+    cron_file: wp-cron
+  when: ansible_hostname == "db1"
+  tags:
+    - backup
+    - backup-cron
+
+- name: bkp db to bkp-server
+  cron:
+    name: bkp-wp-db
+    minute: '*/10'
+    user: root
+    job: '/bin/scp bkp@db1:wp.sql /home/bkp/backup/'
+    cron_file: wp-cron
+  when: ansible_hostname == "bkplog"
+  tags:
+    - backup
+    - backup-cron
+
+- name: bkp dir to bkp-server
+  cron:
+    name: bkp-wp-dir
+    minute: '*/10'
+    user: root
+    job: '/bin/scp bkp@fe1:wp.tar.gz /home/bkp/backup/'
+    cron_file: wp-cron
+  when: ansible_hostname == "bkplog"
+  tags:
+    - backup
+    - backup-cron
+
+
+

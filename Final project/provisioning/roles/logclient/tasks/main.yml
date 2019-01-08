@@ -1,0 +1,84 @@
+# tasks file for logclient
+---
+- name: Install audispd-plugins
+  yum:
+    name: audispd-plugins
+    state: latest
+  tags:
+    - logclient
+    - audispd-plugins
+
+- name: Update /etc/audisp/audisp-remote.conf
+  template:
+    src: etc/audisp/audisp-remote.conf.j2
+    dest: /etc/audisp/audisp-remote.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart auditd
+  tags:
+    - logclient
+    - audispd-configuration
+
+- name: Update /etc/audisp/plugins.d/syslog.conf
+  template:
+    src: etc/audisp/plugins.d/syslog.conf.j2
+    dest: /etc/audisp/plugins.d/syslog.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart auditd
+  tags:
+    - logclient
+    - audispd-configuration
+
+- name: Update /etc/audit/rules.d/audit.rules 
+  template:
+    src: etc/audit/rules.d/audit.rules.j2
+    dest: /etc/audit/rules.d/audit.rules
+    owner: root
+    group: root
+    mode: 0600
+  notify: restart auditd
+  tags:
+    - logclient
+    - auditd-configuration
+
+- name: Update /etc/audit/auditd.conf
+  template:
+    src: etc/audit/auditd.conf.j2
+    dest: /etc/audit/auditd.conf
+    owner: root
+    group: root
+    mode: 0600
+  notify: restart auditd
+  tags:
+    - logclient
+    - auditd-configuration
+
+
+- name: Update /etc/rsyslog.conf
+  template:
+    src: etc/rsyslog.conf.j2
+    dest: /etc/rsyslog.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart rsyslog
+  tags:
+    - logclient
+    - rsyslog-configuration
+
+- name: Update /etc/rsyslog.d/mysqld.conf
+  template:
+    src: etc/rsyslog.d/mysqld.conf.j2
+    dest: /etc/rsyslog.d/mysqld.conf
+    owner: root
+    group: root
+    mode: 0644
+  when: ansible_hostname is search ("db")
+  notify: restart rsyslog
+  tags:
+    - logclient
+    - rsyslog-configuration-mysql
+

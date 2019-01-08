@@ -1,0 +1,16 @@
+# handlers file for logclient
+---
+- name: reload auditd
+  systemd:
+    name: auditd
+    state: reloaded
+
+- name: restart auditd
+  shell: service auditd restart
+  args:
+    executable: /bin/bash
+
+- name: restart rsyslog
+  systemd:
+    name: rsyslog
+    state: restarted

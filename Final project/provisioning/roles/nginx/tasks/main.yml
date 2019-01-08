@@ -1,0 +1,85 @@
+# tasks file for nginx
+---
+- name: Install nginx
+  yum:
+    name: nginx
+    state: latest
+  tags:
+    - package
+    - nginx
+
+- name: Update nginx.conf configuration file - /etc/nginx/nginx.conf
+  template:
+    src: etc/nginx/nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload nginx
+  tags:
+    - nginx
+    - nginx-configuration
+
+- name: Update vhost configuration file - /etc/nginx/conf.d/wp.conf
+  template:
+    src: etc/nginx/conf.d/wp.conf.j2
+    dest: /etc/nginx/conf.d/wp.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload nginx
+  tags:
+    - nginx
+    - nginx-vhost-configuration
+
+- name: Creates directory /var/www/html/wordpress
+  file:
+    path: /var/www/html/wordpress
+    state: directory
+    mode: 0755
+    owner: nginx
+    group: nginx
+  tags:
+    - nginx
+    - nginx-create-dir
+
+- name: enable nginx
+  systemd:
+    name: nginx
+    enabled: yes
+  tags:
+    - nginx
+    - nginx-systemd-enable
+
+- name: start nginx
+  systemd:
+    name: nginx
+    state: started
+  tags:
+    - nginx
+    - nginx-systemd-start
+
+- name: Open firewalld
+  firewalld:
+    service: http
+    zone: public
+    permanent: yes
+    state: enabled
+  notify: restart firewalld
+  tags:
+    - nginx
+    - nginx-firewalld
+
+- name: Setsebool 1
+  command: /sbin/setsebool -P httpd_can_network_connect 1
+  become: yes
+  tags:
+    - nginx
+    - nginx-setsebool
+
+- name: Setsebool2
+  command: /sbin/setsebool -P httpd_can_network_connect_db 1
+  become: yes
+  tags:
+    - nginx
+    - nginx-setsebool

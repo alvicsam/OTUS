@@ -1,0 +1,6 @@
+---
+mysql_role: "master"
+mysql_server_id: 1
+mysql_server_ip: 192.168.1.105
+mysql_init: true
+mysql_root_pwd: "P@ssw0rd"

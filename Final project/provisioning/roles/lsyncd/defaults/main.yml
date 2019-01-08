@@ -1,0 +1,3 @@
+---
+# defaults file for lsyncd
+lsyncd_next_server: "fe2"

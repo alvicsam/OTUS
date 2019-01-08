@@ -1,0 +1,22 @@
+---
+- name: Prepare for replication
+  shell: |
+    mysql -uroot -p{{ mysql_root_pwd }} -e "SET SQL_LOG_BIN=0;CREATE USER rpl_user@'%' IDENTIFIED WITH sha256_password BY 'Password123!';GRANT REPLICATION SLAVE ON *.* TO rpl_user@'%';FLUSH PRIVILEGES;SET SQL_LOG_BIN=1;CHANGE MASTER TO MASTER_USER='rpl_user', MASTER_PASSWORD='Password123!' FOR CHANNEL 'group_replication_recovery';"
+  register: prep_rep
+  when: mysql_init == true
+  tags:
+    - mysql
+    - mysql-slave
+- debug:
+      var: prep_rep
+
+- name: Start replication
+  shell: |
+    mysql -uroot -p{{ mysql_root_pwd }} -e "START GROUP_REPLICATION;"
+  register: start_rep
+  when: mysql_init == true
+  tags:
+    - mysql
+    - mysql-slave
+- debug:
+      var: start_rep

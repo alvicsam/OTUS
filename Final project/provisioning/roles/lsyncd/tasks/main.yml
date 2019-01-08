@@ -1,0 +1,153 @@
+---
+# tasks file for lsyncd
+- name: Install lsyncd
+  yum:
+    name: lsyncd
+    state: present
+  tags:
+    - lsyncd
+    - lsyncd-install
+
+- name: Create user for syncing folders
+  user:
+    name: www
+    password: '$6$CrYpt0$mi.Pu2ghRvOCAMfPk8KSvJemc9cboVDHvKSXr8.Q48tGvGtf5ZFZWAWr9E/Scj6PB56tZHc81rnkYbf04e1r/0'
+    state: present
+    shell: /bin/bash
+    append: yes
+  tags:
+    - lsyncd
+    - lsyncd-useradd
+
+- name: Adding www to group
+  user:
+    name: www
+    groups: nginx
+    state: present
+    append: yes
+  tags:
+    - lsyncd
+    - lsyncd-useradd
+
+
+- name: Create .ssh for www
+  file:
+    path: /home/www/.ssh
+    state: directory
+    owner: www
+    group: www
+    mode: 0700
+  tags:
+    - lsyncd
+    - lsyncd-sshdir
+
+- name: Placing id_rsa
+  copy:
+    src: id_rsa
+    dest: /root/.ssh/id_rsa
+    owner: root
+    group: root
+    mode: 0600
+  tags:
+    - lsyncd
+    - lsyncd-userkey
+
+- name: Changing authorized_keys
+  authorized_key:
+    user: www
+    state: present
+    key: "{{ lookup('file', 'roles/lsyncd/files/id_rsa.pub') }}"
+  tags:
+    - lsyncd
+    - lsyncd-userkey
+
+- name: Chown wp dir
+  file:
+    path: /var/www/html/wordpress
+    owner: nginx
+    group: nginx
+    recurse: yes
+  become: yes
+  tags:
+    - lsyncd
+    - lsyncd-chown
+
+- name: Restore selinux context for files
+  command: /sbin/restorecon -R /var/www/html
+  become: yes
+  tags:
+    - lsyncd
+    - lsyncd-restorecon
+
+- name: Chmod wordpress dir
+  command: /bin/find /var/www/html -type d -exec chmod 775 {} \;
+  tags:
+    - lsyncd
+    - lsyncd-chmod
+
+- name: Chmod wordpress dir
+  command: /bin/find /var/www/html -type f -exec chmod 664 {} \;
+  tags:
+    - lsyncd
+    - lsyncd-chmod
+
+- name: lsyncd hosts key add
+  command: ssh-keyscan -H {{ lsyncd_next_server }} > /root/.ssh/known_hosts
+  tags:
+    - lsyncd
+    - lsyncd-keyscan
+
+
+- name: Update lsyncd configuration file
+  template:
+    src: lsyncd.conf.j2
+    dest: /etc/lsyncd.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart lsyncd
+  tags:
+    - lsyncd
+    - lsyncd-configuration
+
+- name: chmod to cron d
+  cron:
+    name: chmod wp dir d
+    minute: '*/10'
+    user: root
+    job: '/bin/find /var/www/html -type d -exec chmod 775 {} \;'
+    cron_file: wp-cron
+  tags:
+    - lsyncd
+    - lsyncd-cron
+
+- name: chmod to cron f
+  cron:
+    name: chmod wp dir f
+    minute: '*/10'
+    user: root
+    job: '/bin/find /var/www/html -type f -exec chmod 660 {} \;'
+    cron_file: wp-cron
+  tags:
+    - lsyncd
+    - lsyncd-cron
+
+- name: restorecon to cron
+  cron:
+    name: restorecon
+    minute: '*/10'
+    user: root
+    job: '/sbin/restorecon -R /var/www/html/'
+    cron_file: wp-cron
+  tags:
+    - lsyncd
+    - lsyncd-cron
+
+- name: start lsyncd
+  systemd:
+    name: lsyncd
+    state: started
+    enabled: yes
+  tags:
+    - lsyncd
+    - lsyncd-systemd-start

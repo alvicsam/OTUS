@@ -1,0 +1,61 @@
+---
+- hosts: bkplog
+  tags: bkplog
+  become: true
+  roles:
+    - roles/common
+    - roles/bkpserver
+    - roles/logserver
+  tasks:
+  - name: "zaglushka"
+    debug:
+      msg: "reserved for future use"
+
+- hosts: fe
+  tags: fe
+  become: true
+  roles:
+    - roles/common
+    - roles/nginx
+    - roles/php
+    - roles/mysqlrouter
+    - roles/wordpress
+    - roles/keepalived
+    - roles/lsyncd
+    - roles/bkpserver
+    - roles/logclient
+  tasks:
+  - name: "zaglushka"
+    debug:
+      msg: "reserved for future use"
+
+- hosts: db-master
+  tags:
+    - db
+    - db-master
+  become: true
+  roles:
+    - roles/common
+    - roles/mysql-server
+    - roles/bkpserver
+    - roles/logclient
+  tasks:
+  - name: "zaglushka"
+    debug:
+      msg: "reserved for future use"
+
+- hosts: db-slaves
+  tags:
+    - db
+    - db-slaves
+  become: true
+  roles:
+    - roles/common
+    - roles/mysql-server
+    - roles/bkpserver
+    - roles/logclient
+  tasks:
+  - name: "zaglushka"
+    debug:
+      msg: "reserved for future use"
+

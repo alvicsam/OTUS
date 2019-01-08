@@ -1,0 +1,80 @@
+# -*- mode: ruby -*-
+# vim: set ft=ruby :
+# -*- mode: ruby -*-
+# vim: set ft=ruby :
+
+MACHINES = {
+  :bkplog => {
+        :box_name => "centos/7",
+        :net => [
+                   {ip: '192.168.1.102', adapter: 2, netmask: "255.255.255.0"},
+                ]
+  },
+  :fe1 => {
+        :box_name => "centos/7",
+        :net => [
+                   {ip: '192.168.1.103', adapter: 2, netmask: "255.255.255.0"},
+                ]
+  },
+  :fe2 => {
+        :box_name => "centos/7",
+        :net => [
+                   {ip: '192.168.1.104', adapter: 2, netmask: "255.255.255.0"},
+                ]
+  },
+  :db1 => {
+        :box_name => "centos/7",
+        :net => [
+                   {ip: '192.168.1.105', adapter: 2, netmask: "255.255.255.0"},
+                ]
+  },
+  :db2 => {
+        :box_name => "centos/7",
+        :net => [
+                   {ip: '192.168.1.106', adapter: 2, netmask: "255.255.255.0"},
+                ]
+  },
+  :db3 => {
+        :box_name => "centos/7",
+        :net => [
+                   {ip: '192.168.1.107', adapter: 2, netmask: "255.255.255.0"},
+                ]
+  },
+
+}
+
+Vagrant.configure("2") do |config|
+
+  MACHINES.each do |boxname, boxconfig|
+
+    config.vm.define boxname do |box|
+
+        box.vm.box = boxconfig[:box_name]
+        box.vm.host_name = boxname.to_s
+
+        boxconfig[:net].each do |ipconf|
+          box.vm.network "public_network", ipconf
+        end
+        
+        if boxconfig.key?(:public)
+          box.vm.network "public_network", boxconfig[:public]
+        end
+
+        box.vm.provision "shell", inline: <<-SHELL
+          mkdir -p ~root/.ssh
+                cp ~vagrant/.ssh/auth* ~root/.ssh
+         echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDc9NmIOUk/5rt+LMJ1aqdY1EJKWpNMQn4iVhnUaBamYhKLpwnn24++Rv6C9XSI37KlEX7IcRQts/DVdc4beZfLeMZY72lNmKLHy4kiKgjDV02WVd0JnOzSdL8jbNXYhXzSI+7s0C0slJpgOjQdplcDLS26JwLQWsN4kd5emBI1mC/xBRmH6aZEWQw8swvcch9oYDp+1nm9e6cIcLxGYRArtGUWk2Pv7bt4lKPbrIHL+6Gx7Bht5xWDWpfqQQYUGAFVg1h/oNroC6lkGH843BvnzwJR2WwluJPDu3OLexg9tynXcDVKJ5P17vPpI32e2BO0elIrxjrcqRFzI2yx63DD vagrant@vagrant" >> /home/vagrant/.ssh/authorized_keys
+        SHELL
+        end
+
+  end
+
+#  config.vm.provision "ansible" do |ansible|
+#    ansible.verbose = "v"
+#    ansible.playbook = "provisioning/playbook.yml"
+#    ansible.sudo = "true"
+#  end
+
+
+end
+

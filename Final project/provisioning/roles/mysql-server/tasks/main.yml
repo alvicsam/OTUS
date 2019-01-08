@@ -1,0 +1,146 @@
+---
+# tasks file for mysql-server
+
+# for debug purposes
+#- name: Disable SElinux
+#  command: /sbin/setenforce 0
+#  become: true
+#- name: Stop the firewalld service
+#  service:
+#    name: firewalld
+#    state: stopped
+#    enabled: true
+#end of debug
+
+- name: Install the mysql-repo
+  yum:
+    name: https://dev.mysql.com/get/mysql80-community-release-el7-1.noarch.rpm
+    state: present
+  tags:
+    - mysql
+
+- name: Install MySQL 8.0
+  yum: pkg={{ item }}
+  with_items:
+    - mysql-community-server
+    - mysql-community-client
+    - MySQL-python
+  tags:
+    - mysql
+
+- name: Start the MySQL service
+  service: 
+    name: mysqld 
+    state: started 
+    enabled: true
+  tags:
+    - mysql
+
+- name: Change mysql root password and keep track in
+  shell: |
+    password_match=`awk '/A temporary password is generated for/ {a=$0} END{ print a }' /var/log/mysqld.log | awk '{print $(NF)}'`
+    echo $password_match
+    mysql -uroot -p$password_match --connect-expired-password -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'P@ssw0rd'; flush privileges; "
+    echo "[client]" > /root/.my.cnf
+    echo "user=root" >> /root/.my.cnf
+    echo "password=P@ssw0rd" >> /root/.my.cnf
+    echo "[mysqldump]" >> /root/.my.cnf
+    echo "user=root" >> /root/.my.cnf
+    echo "password=P@ssw0rd" >> /root/.my.cnf
+  args:
+    creates: /root/.my.cnf
+  register: change_temp_pass
+  notify: restart mysqld
+  when: mysql_init == true
+  tags:
+    - mysql
+    - mysql-set-pwd
+- debug:
+      var: change_temp_pass
+
+- name: Install mysql group_replication plugin
+  shell: |
+    mysql -uroot -p{{ mysql_root_pwd }} -e "INSTALL PLUGIN group_replication SONAME 'group_replication.so';"
+  register: install_plugin
+  when: mysql_init == true
+  tags:
+    - mysql
+    - mysql-set-plugin
+- debug:
+      var: install_plugin
+
+- name: Setting up config file
+  template:
+    src: my.cnf.j2
+    dest: /etc/my.cnf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart mysqld
+  tags:
+    - mysql
+    - mysql-set-config
+
+- name: Setting up config file
+  template:
+    src: my.cnf.j2
+    dest: /etc/my.cnf
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - mysql
+    - mysql-set-config-wor
+
+- name: Open firewalld 3306
+  firewalld:
+    service: mysql
+    zone: public
+    permanent: yes
+    state: enabled
+  notify: restart firewalld
+  tags:
+    - mysql
+    - mysql-firewalld
+
+- name: Open firewalld 24901
+  firewalld:
+    port: 24901/tcp
+    zone: public
+    permanent: yes
+    state: enabled
+  notify: restart firewalld
+  tags:
+    - mysql
+    - mysql-firewalld
+
+- name: Copy selinux module
+  copy:
+    src: files/semodule/
+    dest: /var/lib/selinux
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - mysql
+    - mysql-selinux
+
+- name: Install selinux module
+  shell: /sbin/semodule -i /var/lib/selinux/mysqld_add.pp
+  register: install_seplugin
+  when: mysql_init == true
+  tags:
+    - mysql
+    - mysql-selinux
+- debug:
+      var: install_seplugin
+
+- meta: flush_handlers
+
+- name: Include master yml
+  include: master.yml
+  when: mysql_role == "master"
+
+- name: Include slave yml
+  include: slave.yml
+  when: mysql_role == "slave"
