@@ -64,6 +64,7 @@ mysql>
 На fe1 копия сайта tar'ом упаковывается в /home/bkp/wp.tar.gz  
 На db1 снимается дамп c помощью mysqldump базы wordpress в /home/bkp/wp.sql  
 ВМ bkplog забирает эти файлы к себе по крону в /home/bkp  
+Файл заданий cron лежит тут: /etc/cron.d/wp-cron  
 Всё остальное можно восстановить с помощью ансибл.  
 
 ### Логирование:
